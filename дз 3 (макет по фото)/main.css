@@ -1,0 +1,29 @@
+table {
+    border: 1px outset darkgrey;
+}
+
+td {
+    border: 1px outset darkgrey;
+}
+
+.center {
+    text-align: center;
+}
+
+.top-align {
+    vertical-align: top;
+}
+
+.magic {
+	height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.middle-centered {
+    display: flex;
+    height: 50px;
+    flex-direction: column;
+    justify-content: space-around;
+}
