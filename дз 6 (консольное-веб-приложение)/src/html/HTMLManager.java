@@ -13,12 +13,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class HTMLManager {
-    public static final String PATH = ".temp.html";
-    private static FileWriter writer;
-    private static File file;
+public class HTMLManager implements HtmlGenerator{
+    public final String PATH = ".temp.html";
+    private FileWriter writer;
+    private File file;
 
-    static {
+    {
         file = new File(PATH);
         try {
             file.createNewFile();
@@ -27,7 +27,7 @@ public class HTMLManager {
         }
     }
 
-    private static void generateFeed(List<Post> posts) throws IOException {
+    private void generateFeed(List<Post> posts) throws IOException {
         writer.write("<!DOCTYPE html>\n" +
                 "<html lang=\"en-US\">\n" +
                 "<html lang=\"ru\">\n" +
@@ -53,7 +53,7 @@ public class HTMLManager {
         writer.close();
     }
 
-    private static void generateMessages(List<Message> messages) throws IOException {
+    private void generateMessages(List<Message> messages) throws IOException {
         writer.write("<!DOCTYPE html>\n" +
                 "<html lang=\"en-US\">\n" +
                 "<html lang=\"ru\">\n" +
@@ -78,7 +78,7 @@ public class HTMLManager {
         writer.close();
     }
 
-    private static void generateId(User user) throws IOException {
+    private void generateId(User user) throws IOException {
         if (user == null) {
             generateNotFound();
             return;
@@ -98,7 +98,7 @@ public class HTMLManager {
         writer.close();
     }
 
-    private static void generateNotFound() throws IOException {
+    private void generateNotFound() throws IOException {
         writer.write("<!DOCTYPE html>\n" +
                 "<html lang=\"en-US\">\n" +
                 "<html lang=\"ru\">\n" +
@@ -118,11 +118,11 @@ public class HTMLManager {
         writer.close();
     }
 
-    public static void generate(Page page, DataSource dataSource) {
+    public void generate(Page page, DataSource dataSource) {
         generate(page, 0, dataSource);
     }
 
-    public static void generate(Page page, int param, DataSource dataSource) {
+    public void generate(Page page, int param, DataSource dataSource) {
         try {
             writer = new FileWriter(file);
         } catch (IOException e) {
@@ -152,7 +152,7 @@ public class HTMLManager {
         }
     }
 
-    public static void show(Page page) {
+    public void show(Page page) {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
                 Desktop.getDesktop().browse(new URI(PATH));

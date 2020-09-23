@@ -13,6 +13,7 @@ public class Main {
     private static String PASSWORD = "sdfsdf";
 
     public static void main(String[] args) {
+        HTMLManager htmlManager = new HTMLManager();
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         DataSource dataSource;
         try {
@@ -34,25 +35,25 @@ public class Main {
             try {
                 page = Page.valueOf(req[1]);
             } catch (IllegalArgumentException e) {
-                HTMLManager.generate(Page.notFound, dataSource);
-                HTMLManager.show(Page.notFound);
+                htmlManager.generate(Page.notFound, dataSource);
+                htmlManager.show(Page.notFound);
                 continue;
             }
 
             if (page == Page.id) {
                 if (req.length < 3) {
-                    HTMLManager.generate(Page.notFound, dataSource);
+                    htmlManager.generate(Page.notFound, dataSource);
                 } else {
                     try {
-                        HTMLManager.generate(Page.id, Integer.parseInt(req[2]), dataSource);
+                        htmlManager.generate(Page.id, Integer.parseInt(req[2]), dataSource);
                     } catch (NumberFormatException e) {
-                        HTMLManager.generate(Page.notFound, dataSource);
+                        htmlManager.generate(Page.notFound, dataSource);
                     }
                 }
             } else {
-                HTMLManager.generate(page, dataSource);
+                htmlManager.generate(page, dataSource);
             }
-            HTMLManager.show(page);
+            htmlManager.show(page);
         }
     }
 }
