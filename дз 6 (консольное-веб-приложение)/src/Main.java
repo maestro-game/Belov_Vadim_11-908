@@ -1,6 +1,9 @@
 import data.DataSource;
+import dispatcher.Dispatcher;
+import data.SimpleDataSource;
+import dispatcher.RequestDispatcher;
 import html.HTMLManager;
-import html.Page;
+import html.HtmlGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,14 +16,14 @@ public class Main {
     private static String PASSWORD = "sdfsdf";
 
     public static void main(String[] args) {
-        HTMLManager htmlManager = new HTMLManager();
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         DataSource dataSource;
         try {
-            dataSource = new DataSource(URL, USER, PASSWORD);
+            dataSource = new SimpleDataSource(URL, USER, PASSWORD);
         } catch (SQLException e) {
             throw new IllegalArgumentException();
         }
+        HtmlGenerator htmlManager = new HTMLManager(dataSource);
         while (true) {
             String request;
             try {
@@ -30,30 +33,9 @@ public class Main {
                 continue;
             }
 
-            String[] req = request.split("/");
-            Page page;
-            try {
-                page = Page.valueOf(req[1]);
-            } catch (IllegalArgumentException e) {
-                htmlManager.generate(Page.notFound, dataSource);
-                htmlManager.show(Page.notFound);
-                continue;
-            }
+            Dispatcher dispatcher = new RequestDispatcher(htmlManager);
 
-            if (page == Page.id) {
-                if (req.length < 3) {
-                    htmlManager.generate(Page.notFound, dataSource);
-                } else {
-                    try {
-                        htmlManager.generate(Page.id, Integer.parseInt(req[2]), dataSource);
-                    } catch (NumberFormatException e) {
-                        htmlManager.generate(Page.notFound, dataSource);
-                    }
-                }
-            } else {
-                htmlManager.generate(page, dataSource);
-            }
-            htmlManager.show(page);
+            htmlManager.show();
         }
     }
 }

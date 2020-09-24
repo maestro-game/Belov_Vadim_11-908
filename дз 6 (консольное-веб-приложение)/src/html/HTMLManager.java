@@ -17,6 +17,7 @@ public class HTMLManager implements HtmlGenerator{
     public final String PATH = ".temp.html";
     private FileWriter writer;
     private File file;
+    private final DataSource dataSource;
 
     {
         file = new File(PATH);
@@ -118,11 +119,11 @@ public class HTMLManager implements HtmlGenerator{
         writer.close();
     }
 
-    public void generate(Page page, DataSource dataSource) {
-        generate(page, 0, dataSource);
+    public void generate(Page page) {
+        generate(page, 0);
     }
 
-    public void generate(Page page, int param, DataSource dataSource) {
+    public void generate(Page page, int param) {
         try {
             writer = new FileWriter(file);
         } catch (IOException e) {
@@ -152,7 +153,7 @@ public class HTMLManager implements HtmlGenerator{
         }
     }
 
-    public void show(Page page) {
+    public void show() {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
                 Desktop.getDesktop().browse(new URI(PATH));
@@ -160,5 +161,9 @@ public class HTMLManager implements HtmlGenerator{
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public HTMLManager(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 }
