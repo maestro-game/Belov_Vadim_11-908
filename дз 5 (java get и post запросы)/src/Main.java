@@ -14,7 +14,7 @@ public class Main {
         connection.setRequestProperty("User-Agent", USER_AGENT);
         connection.setRequestProperty("Accept-Charset", "UTF-8");
         connection.setDoOutput(true);
-        connection.sec tDoInput(true);
+        connection.setDoInput(true);
         OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String req = reader.lines().skip(5).findFirst().orElse("");
