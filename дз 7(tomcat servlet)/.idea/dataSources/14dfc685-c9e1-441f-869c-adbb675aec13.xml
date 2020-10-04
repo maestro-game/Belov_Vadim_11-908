@@ -795,7 +795,7 @@ true posixrules
     <database id="3" parent="1" name="social">
       <ObjectId>16395</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>677</IntrospectionStateNumber>
+      <IntrospectionStateNumber>739</IntrospectionStateNumber>
       <Current>1</Current>
       <Relations>sequence|table|16618|16620|1
 sequence|table|16656|16658|1
@@ -858,7 +858,7 @@ sequence|table|16656|16658|1
       <Comment>standard public schema</Comment>
       <StateNumber>276</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>678</IntrospectionStateNumber>
+      <IntrospectionStateNumber>740</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <access-method id="18" parent="3" name="heap">
@@ -953,7 +953,7 @@ sequence|table|16656|16658|1
     <table id="34" parent="17" name="users">
       <ObjectId>16427</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>610</StateNumber>
+      <StateNumber>737</StateNumber>
     </table>
     <column id="35" parent="32" name="id">
       <Position>1</Position>
@@ -1086,31 +1086,36 @@ sequence|table|16656|16658|1
     <column id="52" parent="34" name="name">
       <Position>2</Position>
       <DataType>varchar(20)|0s</DataType>
-      <StateNumber>503</StateNumber>
+      <NotNull>1</NotNull>
+      <StateNumber>719</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="53" parent="34" name="surname">
       <Position>3</Position>
       <DataType>varchar(20)|0s</DataType>
-      <StateNumber>503</StateNumber>
+      <NotNull>1</NotNull>
+      <StateNumber>720</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="54" parent="34" name="birth">
       <Position>4</Position>
       <DataType>date|0s</DataType>
-      <StateNumber>589</StateNumber>
+      <NotNull>1</NotNull>
+      <StateNumber>721</StateNumber>
       <TypeId>1082</TypeId>
     </column>
     <column id="55" parent="34" name="course">
       <Position>5</Position>
       <DataType>smallint|0s</DataType>
-      <StateNumber>503</StateNumber>
+      <NotNull>1</NotNull>
+      <StateNumber>722</StateNumber>
       <TypeId>21</TypeId>
     </column>
     <column id="56" parent="34" name="group">
       <Position>6</Position>
       <DataType>varchar(10)|0s</DataType>
-      <StateNumber>503</StateNumber>
+      <NotNull>1</NotNull>
+      <StateNumber>714</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="57" parent="34" name="password">
@@ -1134,5 +1139,23 @@ sequence|table|16656|16658|1
       <Primary>1</Primary>
       <UnderlyingIndexName>users_pkey</UnderlyingIndexName>
     </key>
+    <check id="60" parent="34" name="course_greater_zero">
+      <ObjectId>16673</ObjectId>
+      <StateNumber>731</StateNumber>
+      <ColNames>course</ColNames>
+      <Predicate>course &gt; 0</Predicate>
+    </check>
+    <check id="61" parent="34" name="name_not_empty">
+      <ObjectId>16674</ObjectId>
+      <StateNumber>736</StateNumber>
+      <ColNames>name</ColNames>
+      <Predicate>length((name)::text) &gt; 0</Predicate>
+    </check>
+    <check id="62" parent="34" name="surname_not_empty">
+      <ObjectId>16675</ObjectId>
+      <StateNumber>737</StateNumber>
+      <ColNames>surname</ColNames>
+      <Predicate>length((surname)::text) &gt; 0</Predicate>
+    </check>
   </database-model>
 </dataSource>

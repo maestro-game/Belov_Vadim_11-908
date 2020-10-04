@@ -14,5 +14,5 @@ public interface DataManager {
 
     User getUser(String id);
 
-    boolean addUser(User user, String password);
+    int addUser(User user, String password);
 }

@@ -2,7 +2,7 @@
 <html lang=\"en-US\">
 <html lang=\"ru\">
 <head>
-    <meta charset=\"UTF-8\">
+    <meta charset="UTF-8">
     <title>Как так?</title>
 </head>
 <body style="height: auto; margin: 0">

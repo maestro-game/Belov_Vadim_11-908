@@ -14,9 +14,9 @@ import java.util.List;
 public class SimpleDataManager implements DataManager {
 
     private static final String GET_MESSAGES = "select * from messages order by timestamp desc limit 30";
-    private static final String GET_USER = "select * from users where id=";
+    private static final String GET_USER = "select * from users where id='%s'";
     //language=PostgreSQL
-    private static final String GET_POSTS = "select * from posts where author=%s order by timestamp desc limit 10";
+    private static final String GET_POSTS = "select * from posts where author='%s' order by timestamp desc limit 10";
     //language=PostgreSQL
     private static final String ADD_USER = "insert into users values('%s', '%s', '%s', '%s', '%d', '%s', md5('he he boiii%s'))";
 
@@ -83,7 +83,7 @@ public class SimpleDataManager implements DataManager {
     public User getUser(String id) {
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(GET_USER + id);
+            ResultSet resultSet = statement.executeQuery(GET_USER.formatted(id));
             if (resultSet.next()) {
                 return new User(id, resultSet.getString(2), resultSet.getString(3), resultSet.getDate(4), resultSet.getByte(5), resultSet.getString(6));
             } else {
@@ -95,17 +95,22 @@ public class SimpleDataManager implements DataManager {
     }
 
     @Override
-    public boolean addUser(User user, String password) {
+    public int addUser(User user, String password) {
         try {
             Statement statement = connection.createStatement();
-            return statement.execute(ADD_USER.formatted(user.getId(), user.getName(), user.getSurname(), user.getBirth().toString(), user.getCourse(), user.getGroup(), password));
+            statement.execute(ADD_USER.formatted(user.getId(), user.getName(), user.getSurname(), user.getBirth() == null ? null : user.getBirth().toString(), user.getCourse(), user.getGroup(), password));
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23505")) {
-                return false;
-            } else {
-                throw new IllegalArgumentException(e);
+            switch (e.getSQLState()) {
+                case "23505" -> {
+                    return 23505;
+                }
+                case "23502" -> {
+                    return 23502;
+                }
+                default -> throw new IllegalArgumentException(e);
             }
         }
+        return 0;
     }
 
     public SimpleDataManager(Context context) throws SQLException {

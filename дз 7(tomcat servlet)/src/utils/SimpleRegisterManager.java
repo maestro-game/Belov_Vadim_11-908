@@ -7,7 +7,7 @@ public class SimpleRegisterManager implements RegisterManager {
     private DataManager dataSource;
 
     @Override
-    public boolean register(User user, String password) {
+    public int register(User user, String password) {
         return dataSource.addUser(user, password);
     }
 

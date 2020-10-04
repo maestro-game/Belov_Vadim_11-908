@@ -43,6 +43,12 @@ public class RequestDispatcher implements Dispatcher {
         }
 
         String[] req = uri.split("/");
+
+        if (req.length < 1) {
+            htmlGenerator.render(Page.notFound, servletContext, writer, root);
+            return;
+        }
+
         Page page;
 
         try {
@@ -66,28 +72,53 @@ public class RequestDispatcher implements Dispatcher {
 
             }
             case register -> {
-                User user;
+                if (request.getMethod().equals("GET")) {
+                    htmlGenerator.render(Page.register, servletContext, writer, root);
+                    return;
+                }
+                Date birth;
                 try {
-                    user = new User(
-                            request.getParameter("login"),
-                            request.getParameter("name"),
-                            request.getParameter("surname"),
-                            new Date(new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("birth")).getTime()),
-                            Byte.parseByte(request.getParameter("course")),
-                            request.getParameter("group"));
+                    String s = request.getParameter("birth");
+                    birth = s.equals("") ? null : new Date(new SimpleDateFormat("yyyy-MM-dd").parse(s).getTime());
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
+                Byte course;
+                {
+                    String s = request.getParameter("course");
+                    course = s.equals("") ? null : Byte.parseByte(s);
+                }
+                String login = request.getParameter("login");
+                String name = request.getParameter("name");
+                String surname = request.getParameter("surname");
+                String group = request.getParameter("group");
+                String password = request.getParameter("password");
 
-                if (registerManager.register(user, request.getParameter("password"))) {
-                    parameter = request.getParameter("login");
+                int answer;
+                if (birth != null && course != null && login.length() > 0 && name.length() > 0 && surname.length() > 0 && group.length() > 0 && password.length() > 0) {
+                    if (password.length() < 12) {
+                        answer = 200;
+                    } else {
+                        answer = registerManager.register(new User(login, name, surname, birth, course, group), password);
+                    }
                 } else {
-                    root.put("login", user.getId());
-                    root.put("name", user.getName());
-                    root.put("surname", user.getSurname());
-                    root.put("birth", user.getBirth());
-                    root.put("course", user.getCourse());
-                    root.put("group", user.getGroup());
+                    answer = 23502;
+                }
+                if (answer == 0) {
+                    page = Page.id;
+                    parameter = login;
+                } else {
+                    switch (answer) {
+                        case 200 -> root.put("message", "Пароль должен быть не короче 12 символов.");
+                        case 23502 -> root.put("message", "Все поля должны быть заполнены.");
+                        case 23505 -> root.put("message", "Пользователь с таким логином уже существует.");
+                    }
+                    root.put("login", login);
+                    root.put("name", name);
+                    root.put("surname", surname);
+                    root.put("birth", birth);
+                    root.put("course", course);
+                    root.put("group", group);
                     page = Page.register;
                 }
             }
