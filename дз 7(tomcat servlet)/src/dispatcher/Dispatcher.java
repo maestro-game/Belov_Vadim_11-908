@@ -1,7 +1,8 @@
 package dispatcher;
 
-import java.io.Writer;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public interface Dispatcher {
-    public void dispatch(String request, Writer writer);
+    void dispatch(HttpServletRequest request, HttpServletResponse writer);
 }

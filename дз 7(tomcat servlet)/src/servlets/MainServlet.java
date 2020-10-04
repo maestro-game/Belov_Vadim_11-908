@@ -1,47 +1,62 @@
 package servlets;
 
-import data.DataSource;
+import data.DataManager;
+import data.SimpleDataManager;
 import dispatcher.Dispatcher;
-import data.SimpleDataSource;
 import dispatcher.RequestDispatcher;
 import html.HTMLManager;
 import html.HtmlGenerator;
+import utils.LoginManager;
+import utils.RegisterManager;
+import utils.SimpleLoginManager;
+import utils.SimpleRegisterManager;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 
 public class MainServlet extends HttpServlet {
-    private static String URL = "jdbc:postgresql://localhost:5432/social";
-    private static String USER = "postgres";
-    private static String PASSWORD = "sdfsdf";
     HtmlGenerator htmlManager;
+    RegisterManager registerManager;
+    LoginManager loginManager;
+    Dispatcher dispatcher;
 
     @Override
     public void init() {
-        System.out.println("hi martin");
-        DataSource dataSource;
+        DataManager dataManager;
         try {
-            dataSource = new SimpleDataSource(URL, USER, PASSWORD);
-        } catch (SQLException e) {
+            dataManager = new SimpleDataManager(new InitialContext());
+        } catch (SQLException | NamingException e) {
             throw new IllegalArgumentException();
         }
-        htmlManager = new HTMLManager(dataSource);
+        htmlManager = new HTMLManager(dataManager);
+        registerManager = new SimpleRegisterManager(dataManager);
+        loginManager = new SimpleLoginManager(dataManager);
+        dispatcher = new RequestDispatcher(htmlManager, loginManager, registerManager);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        Dispatcher dispatcher = new RequestDispatcher(htmlManager);
+        resp.setCharacterEncoding("UTF-8");
+        System.out.println("get");
+        dispatcher.dispatch(req, resp);
+    }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
-            dispatcher.dispatch(req.getRequestURI(), resp.getWriter());
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            request.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
         }
+        System.out.println("post");
+        response.setCharacterEncoding("UTF-8");
+        dispatcher.dispatch(request, response);
     }
 }

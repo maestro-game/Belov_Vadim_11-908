@@ -1,11 +1,13 @@
 package html;
 
+import javax.servlet.ServletContext;
 import java.io.Writer;
+import java.util.Map;
 
 public interface HtmlGenerator {
     String PATH = ".temp.html";
 
-    void generate(Page page, Writer writer);
+    void render(Page page, ServletContext servletContext, Writer writer, Map<String, Object> root);
 
-    void generate(Page page, int param, Writer writer);
+    void render(Page page, String param, ServletContext servletContext, Writer writer, Map<String, Object> root);
 }

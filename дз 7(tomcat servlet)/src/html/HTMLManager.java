@@ -1,146 +1,45 @@
 package html;
 
-import data.DataSource;
-import models.Message;
-import models.Post;
+import data.DataManager;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateException;
 import models.User;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.util.Map;
 
-public class HTMLManager implements HtmlGenerator{
-    public final String PATH = ".temp.html";
-    private Writer writer;
-    private final DataSource dataSource;
+public class HTMLManager implements HtmlGenerator {
+    private final DataManager dataManager;
 
-    private void generateFeed(List<Post> posts) throws IOException {
-        writer.write("<!DOCTYPE html>\n" +
-                "<html lang=\"en-US\">\n" +
-                "<html lang=\"ru\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Кормить</title>\n" +
-                "</head>\n" +
-                "\t<body>\n");
-        posts.forEach(post -> {
-            try {
-                writer.write("\t\t<div>\n" +
-                        "<h2 style=\"text-align: center\">" + post.getName() + "</h2>" +
-                        "<h3>" + post.getAuthor().getName() + post.getAuthor().getSurname() + "</h3>" +
-                        "<h4>" + post.getDate().toString() + "</h4>" +
-                        "<p>" + post.getText() + "</p>" +
-                        "\t\t</div>\n");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        });
-        writer.write("\t</body>\n" +
-                "</html>");
-        writer.close();
+    public void render(Page page, ServletContext servletContext, Writer writer, Map<String, Object> root) {
+        render(page, null, servletContext, writer, root);
     }
 
-    private void generateMessages(List<Message> messages) throws IOException {
-        writer.write("<!DOCTYPE html>\n" +
-                "<html lang=\"en-US\">\n" +
-                "<html lang=\"ru\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Флудильня</title>\n" +
-                "</head>\n" +
-                "\t<body>\n");
-        messages.forEach(message -> {
-            try {
-                writer.write("\t\t<div>\n" +
-                        "<h2>" + message.getFrom().getName() + " " + message.getFrom().getSurname() + " => " + message.getTo().getName() + " " + message.getTo().getSurname() + "</h2>" +
-                        "<h4>" + message.getDate().toString() + "</h4>" +
-                        "<p>" + message.getText() + "</p>" +
-                        "\t\t</div>\n");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
+    public void render(Page page, String param, ServletContext servletContext, Writer writer, Map<String, Object> root) {
+        switch (page) {
+            case messages -> {
+                root.put("massages", dataManager.getMessages());
             }
-        });
-        writer.write("\t</body>\n" +
-                "</html>");
-        writer.close();
-    }
-
-    private void generateId(User user) throws IOException {
-        if (user == null) {
-            generateNotFound();
-            return;
+            case id -> {
+                User user = dataManager.getUser(param);
+                if (user == null) {
+                    page = Page.notFound;
+                } else {
+                    root.put("profile", user);
+                    root.put("posts", dataManager.getPosts(param));
+                }
+            }
         }
-        writer.write("<!DOCTYPE html>\n" +
-                "<html lang=\"en-US\">\n" +
-                "<html lang=\"ru\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>" + user.getName() + " " + user.getSurname() + "</title>\n" +
-                "</head>\n" +
-                "\t<body>\n" +
-                "<h2>" + user.getName() + " " + user.getSurname() + "</h2>" +
-                "<h4>" + "Возраст: " + user.getAge() + ", " + user.getGroup() + ", " + user.getCourse() + " курс" + "</h4>" +
-                "\t</body>\n" +
-                "</html>");
-        writer.close();
-    }
 
-    private void generateNotFound() throws IOException {
-        writer.write("<!DOCTYPE html>\n" +
-                "<html lang=\"en-US\">\n" +
-                "<html lang=\"ru\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Как так?</title>\n" +
-                "</head>\n" +
-                "\t<body style=\"height: auto; margin: 0\">\n" +
-                "\t<div style=\"background: #f8f5f4; display: flex; height: 100vmin\">\n" +
-                "\t\t<div style=\"margin: auto\">\n" +
-                "\t\t\t<img src=\"https://www.minecraft.net/content/dam/minecraft/creeper.png\">\n" +
-                "\t\t\t<h2>404: Not Found</h2>\n" +
-                "\t\t</div>\n" +
-                "\t</div>\n" +
-                "\t</body>\n" +
-                "</html>");
-        writer.close();
-    }
-
-    public void generate(Page page, Writer writer) {
-        generate(page, 0, writer);
-    }
-
-    public void generate(Page page, int param, Writer writer) {
-        this.writer = writer;
         try {
-            switch (page) {
-                case feed: {
-                    generateFeed(dataSource.getPosts());
-                    break;
-                }
-                case messages: {
-                    generateMessages(dataSource.getMessages());
-                    break;
-                }
-                case notFound: {
-                    generateNotFound();
-                    break;
-                }
-                case id: {
-                    generateId(dataSource.getUser(param));
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            ((Configuration) servletContext.getAttribute("cfg")).getTemplate(page.path).process(root, writer);
+        } catch (IOException | TemplateException e) {
+            throw new IllegalStateException(e);
         }
     }
 
-    public HTMLManager(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public HTMLManager(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 }

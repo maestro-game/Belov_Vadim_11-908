@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="social">
+    <output-path>$PROJECT_DIR$/out/artifacts/social</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="дз 7(tomcat servlet)" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="дз 7(tomcat servlet)/web/Web" />
+    </root>
+  </artifact>
+</component>

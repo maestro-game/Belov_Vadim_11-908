@@ -1,11 +1,17 @@
 package models;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class User {
-    int id;
+    String id;
     String name, surname, group;
-    byte age, course;
+    byte course;
+    Date birth;
+
+    public String getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -19,8 +25,8 @@ public class User {
         return group;
     }
 
-    public byte getAge() {
-        return age;
+    public Date getBirth() {
+        return birth;
     }
 
     public byte getCourse() {
@@ -32,7 +38,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id;
+        return id.equals(user.id);
     }
 
     @Override
@@ -40,12 +46,12 @@ public class User {
         return Objects.hash(id);
     }
 
-    public User(int id, String name, String surname, byte age, byte course, String group) {
+    public User(String id, String name, String surname, java.sql.Date birth, byte course, String group) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.group = group;
-        this.age = age;
+        this.birth = birth;
         this.course = course;
     }
 }

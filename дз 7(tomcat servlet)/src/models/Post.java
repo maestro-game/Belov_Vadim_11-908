@@ -1,25 +1,19 @@
 package models;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Post {
     int id;
-    String name;
     User author;
-    Timestamp date;
+    Timestamp timestamp;
     String text;
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Timestamp getDate() {
-        return date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
     public String getText() {
@@ -30,11 +24,10 @@ public class Post {
         return author;
     }
 
-    public Post(int id, String name, User author, Timestamp date, String text) {
+    public Post(int id, User author, Timestamp timestamp, String text) {
         this.id = id;
-        this.name = name;
         this.author = author;
-        this.date = date;
+        this.timestamp = timestamp;
         this.text = text;
     }
 }
